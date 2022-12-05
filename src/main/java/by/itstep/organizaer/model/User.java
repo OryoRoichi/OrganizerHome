@@ -24,7 +24,7 @@ public class User {
 
     String name;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     Contacts contacts;
 
     LocalDateTime birthDay;
