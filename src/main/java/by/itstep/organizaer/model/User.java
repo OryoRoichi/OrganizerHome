@@ -1,15 +1,18 @@
 package by.itstep.organizaer.model;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Entity
+@Builder
 @Table(name = "org_user")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
@@ -18,6 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
+    @Column(unique = true)
     String login;
 
     String password;
@@ -27,7 +31,7 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     Contacts contacts;
 
-    LocalDateTime birthDay;
+    LocalDate birthDay;
 
     @OneToMany(mappedBy = "user")
     List<Friend> friendList;

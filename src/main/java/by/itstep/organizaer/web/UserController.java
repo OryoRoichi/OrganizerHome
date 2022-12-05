@@ -1,6 +1,7 @@
 package by.itstep.organizaer.web;
 
 import by.itstep.organizaer.model.User;
+import by.itstep.organizaer.model.dto.UserDto;
 import by.itstep.organizaer.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 }
