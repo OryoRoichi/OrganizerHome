@@ -10,3 +10,6 @@ spring:
       ddl-auto: update
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
 
+project:
+  format-date: ${JAVA_DATE_FORMAT:dd-MM-yyyy}
+  format-date-time: dd.MM.yyyy HH:mm:ss
