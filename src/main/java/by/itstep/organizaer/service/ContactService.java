@@ -1,7 +1,7 @@
 package by.itstep.organizaer.service;
 
-import by.itstep.organizaer.model.Contacts;
-import by.itstep.organizaer.model.User;
+import by.itstep.organizaer.model.entity.Contacts;
+import by.itstep.organizaer.model.entity.User;
 import by.itstep.organizaer.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

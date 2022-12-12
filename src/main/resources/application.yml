@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: classpath:project.yml
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=organizer
     username: postgres
@@ -9,7 +11,3 @@ spring:
     hibernate:
       ddl-auto: update
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
-
-project:
-  format-date: ${JAVA_DATE_FORMAT:dd-MM-yyyy}
-  format-date-time: dd.MM.yyyy HH:mm:ss

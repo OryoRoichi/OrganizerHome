@@ -1,6 +1,6 @@
 package by.itstep.organizaer.web;
 
-import by.itstep.organizaer.model.Contacts;
+import by.itstep.organizaer.model.entity.Contacts;
 import by.itstep.organizaer.service.ContactService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

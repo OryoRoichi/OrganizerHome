@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "project")
-//@PropertySource(value = "classpath:project.yml")
 @Component
 public class ProjectConfiguration {
 

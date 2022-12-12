@@ -1,8 +1,6 @@
-package by.itstep.organizaer.model;
+package by.itstep.organizaer.model.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
@@ -14,6 +12,8 @@ import java.util.List;
 @Builder
 @Table(name = "org_user")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id

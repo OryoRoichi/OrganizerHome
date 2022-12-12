@@ -1,6 +1,5 @@
 package by.itstep.organizaer.web;
 
-import by.itstep.organizaer.model.User;
 import by.itstep.organizaer.model.dto.UserDto;
 import by.itstep.organizaer.service.UserService;
 import lombok.AccessLevel;

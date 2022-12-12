@@ -1,7 +1,7 @@
 package by.itstep.organizaer.model.dto;
 
-import by.itstep.organizaer.model.Contacts;
-import by.itstep.organizaer.model.Friend;
+import by.itstep.organizaer.model.entity.Contacts;
+import by.itstep.organizaer.model.entity.Friend;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

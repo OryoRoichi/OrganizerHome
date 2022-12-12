@@ -1,4 +1,4 @@
-package by.itstep.organizaer.model;
+package by.itstep.organizaer.model.entity;
 
 import lombok.AccessLevel;
 import lombok.Data;
