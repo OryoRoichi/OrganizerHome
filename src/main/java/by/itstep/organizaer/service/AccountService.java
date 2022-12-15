@@ -11,13 +11,12 @@ import by.itstep.organizaer.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@FieldDefaults (level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class AccountService {
 
@@ -27,7 +26,8 @@ public class AccountService {
 
     UserRepository userRepository;
 
-    public AccountDto createAccount(AccountDto accountDto){
+    @Transactional
+    public AccountDto createAccount(AccountDto accountDto) {
         Account accountToSave = accountMapper.toEntity(accountDto);
         accountToSave.setUser(userRepository.findById(1L).orElseThrow(() -> new UserNotFoundException(1L)));
         try {
@@ -40,5 +40,23 @@ public class AccountService {
 
     public AccountDto getAccountById(Long id) {
         return accountMapper.toDto(accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id)));
+    }
+
+    @Transactional
+    public AccountDto update(String name, Long id) {
+        return accountRepository.findById(id).map(account -> {
+                    account.setName(name);
+                    return accountRepository.save(account);
+                })
+                .map(accountMapper::toDto)
+                .orElseThrow(() -> new AccountNotFoundException(id));
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if (!accountRepository.existsById(id)) {
+            throw new AccountNotFoundException(id);
+        }
+        accountRepository.deleteById(id);
     }
 }

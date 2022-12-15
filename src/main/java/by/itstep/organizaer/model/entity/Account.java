@@ -27,6 +27,6 @@ public class Account {
     Currency currency;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne
     User user;
 }

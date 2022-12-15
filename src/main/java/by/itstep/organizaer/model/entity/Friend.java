@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -15,6 +16,8 @@ public class Friend {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
+
+    UUID uuid;
 
     String name;
 

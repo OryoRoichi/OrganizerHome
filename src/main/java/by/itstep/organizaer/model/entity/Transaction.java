@@ -30,4 +30,7 @@ public class Transaction {
     Float ammount;
 
     LocalDateTime dateTime;
+
+    @ManyToOne
+    Friend friend;
 }

@@ -25,4 +25,15 @@ public class AccountController {
     public ResponseEntity<AccountDto> getAccountById(@RequestParam Long id){
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
+
+    @PatchMapping("/patch")
+    public ResponseEntity<AccountDto> update(@RequestParam String name, @RequestParam Long id) {
+        return ResponseEntity.ok(accountService.update(name, id));
+    }
+
+    @DeleteMapping("/delete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@RequestParam Long id) {
+        accountService.delete(id);
+    }
 }
