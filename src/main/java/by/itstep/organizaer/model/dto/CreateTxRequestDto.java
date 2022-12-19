@@ -1,6 +1,5 @@
 package by.itstep.organizaer.model.dto;
 
-import by.itstep.organizaer.model.entity.enums.TransactionType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +19,4 @@ public class CreateTxRequestDto {
     Long targetAccountId;
 
     Float amount;
-
-    TransactionType type;
 }

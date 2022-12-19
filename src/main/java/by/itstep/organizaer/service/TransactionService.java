@@ -16,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -39,49 +40,13 @@ public class TransactionService {
 
     @Transactional
     public TxDto doTransact(CreateTxRequestDto request) {
-        if (request.getType() == null) {
-            throw new UnsuppertedTransactionException("Не заполнен тип транзакции");
-        }
         if (request.getAmount() == null) {
-            throw new BadRequestException("Не указана сумма транзакции")
+            throw new BadRequestException("Не указана сумма транзакции");
         }
-        switch (request.getType()) {
-            case INCOME:
-                return doIncomeTx(request);
-            case OUTCOME:
-                return doOutcomeTx(request);
-        }
-
+        return doTransferTx(request);
     }
 
-    private TxDto doIncomeTx(CreateTxRequestDto request) {
-        final Friend friend = getFriend(request.getFriendId());
-        return Optional.ofNullable(request.getTargetAccountId())
-                .flatMap(accountRepository::findById)
-                .map(account -> {
-                    account.setAmmount(account.getAmmount() + request.getAmount());
-                    accountRepository.save(account);
-                    return mapper.toDto(createTransaction(request, friend, account));
-                })
-                .orElseThrow(() -> new AccountNotFoundException(request.getTargetAccountId()));
-    }
-
-    private TxDto doOutcomeTx(CreateTxRequestDto request) {
-        final Friend friend = getFriend(request.getFriendId());
-        final Account account = Optional.ofNullable(request.getSourceAccountId())
-                .flatMap(accountRepository::findById)
-                .orElseThrow(() -> new AccountNotFoundException(request.getSourceAccountId()));
-        return Optional.of(account)
-                .filter(acc -> acc.getAmmount() >= request.getAmount())
-                .map(acc -> {
-                    acc.setAmmount(acc.getAmmount() - request.getAmount());
-                    accountRepository.save(acc);
-                    return mapper.toDto(createTransaction(request, friend, acc));
-                })
-                .orElseThrow(() -> new NotEnoughFoundsException(account.getName()));
-    }
-
-    private TxDto doTransferTx(CreateTxRequestDto request){
+    private TxDto doTransferTx(CreateTxRequestDto request) {
         Account sourceAccount = Optional.ofNullable(request.getSourceAccountId())
                 .flatMap(id -> accountRepository.findById(request.getSourceAccountId()))
                 .orElseThrow(() -> new AccountNotFoundException(request.getSourceAccountId()));
@@ -95,18 +60,22 @@ public class TransactionService {
                     targetAccount.setAmmount(targetAccount.getAmmount() + request.getAmount());
                     accountRepository.save(account);
                     accountRepository.save(targetAccount);
-                    return mapper.toDto(createTransaction(request, null, account, targetAccount))
+                    return Optional.ofNullable(request.getFriendId())
+                            .flatMap(friendRepository::findById)
+                            .map(friend -> mapper.toDto(createTransaction(request, friend, account, targetAccount)))
+                            .orElseGet(() -> mapper.toDto(createTransaction(request, null, account, targetAccount)));
+
                 })
                 .orElseThrow(() -> new NotEnoughFoundsException(sourceAccount.getName()));
-
     }
 
-    private Transaction createTransaction(CreateTxRequestDto request, Friend friend, Account account) {
+    private Transaction createTransaction(CreateTxRequestDto request, Friend friend, Account sourceAccount, Account targetAccount) {
         return repository.save(Transaction
                 .builder()
-                .transactionType(request.getType())
-                .ammount(request.getAmount())
-                .account(account)
+                .amount(request.getAmount())
+                .sourceAccount(sourceAccount)
+                .targetAccount(targetAccount)
+                .dateTime(LocalDateTime.now())
                 .friend(friend)
                 .build());
     }

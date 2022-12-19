@@ -1,10 +1,6 @@
 package by.itstep.organizaer.model.entity;
 
-import by.itstep.organizaer.model.entity.enums.TransactionType;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
@@ -13,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults (level = AccessLevel.PRIVATE)
 public class Transaction {
@@ -21,13 +18,15 @@ public class Transaction {
     @GeneratedValue (strategy = GenerationType.AUTO)
     Long id;
 
-    @Enumerated (value = EnumType.STRING)
-    TransactionType transactionType;
+    @JoinColumn(name = "source_account")
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    Account sourceAccount;
 
-    @ManyToOne (cascade = CascadeType.REFRESH)
-    Account account;
+    @JoinColumn(name = "target_account")
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    Account targetAccount;
 
-    Float ammount;
+    Float amount;
 
     LocalDateTime dateTime;
 

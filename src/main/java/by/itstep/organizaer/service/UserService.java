@@ -10,12 +10,15 @@ import by.itstep.organizaer.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     UserRepository userRepository;
 
@@ -31,5 +34,11 @@ public class UserService {
             throw new UserAlreadyExistsException(String.format("Логин %s уже занят", user.getLogin()));
         }
         return userMapper.toDto(userToSave);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Не верное имя пользователя или пароль"));
     }
 }

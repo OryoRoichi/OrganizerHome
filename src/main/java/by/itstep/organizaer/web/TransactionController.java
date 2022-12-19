@@ -2,7 +2,6 @@ package by.itstep.organizaer.web;
 
 import by.itstep.organizaer.model.dto.CreateTxRequestDto;
 import by.itstep.organizaer.model.dto.TxDto;
-import by.itstep.organizaer.model.entity.Transaction;
 import by.itstep.organizaer.service.TransactionService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

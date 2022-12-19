@@ -1,7 +1,5 @@
 package by.itstep.organizaer.model.dto;
 
-import by.itstep.organizaer.model.entity.Friend;
-import by.itstep.organizaer.model.entity.enums.TransactionType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,13 +16,15 @@ public class TxDto {
 
     Long id;
 
-    TransactionType transactionType;
+    Long sourceAccountId;
 
-    Long accountId;
+    String sourceAccountName;
 
-    String accountName;
+    Long targetAccountId;
 
-    Float ammount;
+    String targetAccountName;
+
+    Float amount;
 
     LocalDateTime dateTime;
 
