@@ -2,4 +2,5 @@ project:
   format-date: ${JAVA_DATE_FORMAT:dd-MM-yyyy}
   format-date-time: dd.MM.yyyy HH:mm:ss
   security:
-    secret-key: secret
+    secret-key: the_very_secret_that_nobody_can_guess
+    token-lifetime-hours: 1

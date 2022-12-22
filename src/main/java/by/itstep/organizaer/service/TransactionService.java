@@ -6,13 +6,16 @@ import by.itstep.organizaer.model.dto.TxDto;
 import by.itstep.organizaer.model.entity.Account;
 import by.itstep.organizaer.model.entity.Friend;
 import by.itstep.organizaer.model.entity.Transaction;
+import by.itstep.organizaer.model.entity.User;
 import by.itstep.organizaer.model.mapping.TransactionMapper;
 import by.itstep.organizaer.repository.AccountRepository;
 import by.itstep.organizaer.repository.FriendRepository;
 import by.itstep.organizaer.repository.TransactionRepository;
+import by.itstep.organizaer.utils.SecurityUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +50,10 @@ public class TransactionService {
     }
 
     private TxDto doTransferTx(CreateTxRequestDto request) {
+        User currentUser = SecurityUtil.getCurrentUser()
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         Account sourceAccount = Optional.ofNullable(request.getSourceAccountId())
-                .flatMap(id -> accountRepository.findById(request.getSourceAccountId()))
+                .flatMap(id -> accountRepository.findByIdAndUser(request.getSourceAccountId(), currentUser))
                 .orElseThrow(() -> new AccountNotFoundException(request.getSourceAccountId()));
         Account targetAccount = Optional.ofNullable(request.getTargetAccountId())
                 .flatMap(id -> accountRepository.findById(request.getTargetAccountId()))

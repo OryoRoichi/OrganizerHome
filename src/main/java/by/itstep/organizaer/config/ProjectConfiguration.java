@@ -23,5 +23,7 @@ public class ProjectConfiguration {
     public static class Security {
 
         private String secretKey;
+
+        private Integer tokenLifetimeHours;
     }
 }

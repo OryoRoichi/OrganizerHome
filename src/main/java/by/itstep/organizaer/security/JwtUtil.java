@@ -3,17 +3,15 @@ package by.itstep.organizaer.security;
 import by.itstep.organizaer.config.ProjectConfiguration;
 import by.itstep.organizaer.model.entity.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -35,7 +33,7 @@ public class JwtUtil {
      * 5. алгоритм шифрования
      * Ex.:{
      *     header: {
-     *         alg: ES256,
+     *         alg: hmac,
      *         typ: JWT
      *     },
      *     payload: {
@@ -52,18 +50,31 @@ public class JwtUtil {
      * @return строку - JSON-токен
      */
     public String generateToken(final User user) {
-        final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.ES256);
-        final Date expirationDate = Date.from(LocalDateTime.now().plusMinutes(2).atZone(ZoneId.systemDefault()).toInstant());
+        final SecretKey key = getSecretKey();
+        final Date expirationDate = Date.from(LocalDateTime.now()
+                .plusHours(config.getSecurity().getTokenLifetimeHours())
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
         return Jwts.builder()
                 .setSubject("organizer")
-                .addClaims(Map.of("userId", user.getId()))
+                .addClaims(Map.of("userId", user.getId().toString()))
                 .setExpiration(expirationDate)
                 .setIssuedAt(new Date())
-                .signWith(key, SignatureAlgorithm.ES256)
+                .signWith(key)
                 .compact();
     }
 
     public Claims validateAndGet(final String token) {
+        final SecretKey key = getSecretKey();
+        return Jwts.parserBuilder()
+                .requireSubject("organizer")
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(config.getSecurity().getSecretKey().getBytes(StandardCharsets.UTF_8));
     }
 }

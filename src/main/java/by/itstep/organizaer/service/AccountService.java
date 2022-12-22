@@ -5,12 +5,14 @@ import by.itstep.organizaer.exceptions.AccountNotFoundException;
 import by.itstep.organizaer.exceptions.UserNotFoundException;
 import by.itstep.organizaer.model.dto.AccountDto;
 import by.itstep.organizaer.model.entity.Account;
+import by.itstep.organizaer.model.entity.User;
 import by.itstep.organizaer.model.mapping.AccountMapper;
 import by.itstep.organizaer.repository.AccountRepository;
 import by.itstep.organizaer.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +31,7 @@ public class AccountService {
     @Transactional
     public AccountDto createAccount(AccountDto accountDto) {
         Account accountToSave = accountMapper.toEntity(accountDto);
-        accountToSave.setUser(userRepository.findById(1L).orElseThrow(() -> new UserNotFoundException(1L)));
+        accountToSave.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         try {
             accountRepository.save(accountToSave);
         } catch (Exception ex) {
