@@ -1,11 +1,7 @@
 package by.itstep.organizaer.aspect;
 
-import by.itstep.organizaer.exceptions.AccountAlreadyExistsException;
-import by.itstep.organizaer.exceptions.AccountNotFoundException;
-import by.itstep.organizaer.exceptions.UserAlreadyExistsException;
-import by.itstep.organizaer.exceptions.UserNotFoundException;
+import by.itstep.organizaer.exceptions.*;
 import by.itstep.organizaer.model.dto.CommonException;
-import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,7 +20,7 @@ public class ExceptionHandlingAdvice {
                 .build();
     }
 
-    @ExceptionHandler(value = {AccountAlreadyExistsException.class, UserAlreadyExistsException.class})
+    @ExceptionHandler(value = {AccountAlreadyExistsException.class, UserAlreadyExistsException.class, TransactionException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public CommonException handleBadRequest(Throwable ex) {
         return CommonException

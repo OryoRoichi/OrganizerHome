@@ -21,7 +21,8 @@ public class Authority implements GrantedAuthority {
     private Roles authority;
 
     @ManyToOne
-    private User user;
+    @JoinColumn(name = "org_user")
+    private User orgUser;
 
     @Override
     @Transient

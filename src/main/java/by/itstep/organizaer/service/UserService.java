@@ -1,7 +1,5 @@
 package by.itstep.organizaer.service;
 
-import by.itstep.organizaer.aspect.ExceptionHandlingAdvice;
-import by.itstep.organizaer.config.ProjectConfiguration;
 import by.itstep.organizaer.exceptions.UserAlreadyExistsException;
 import by.itstep.organizaer.model.dto.RegistrationRequest;
 import by.itstep.organizaer.model.entity.Authority;
@@ -15,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -38,7 +35,7 @@ public class UserService implements UserDetailsService {
                 .map(role -> Authority
                         .builder()
                         .authority(role)
-                        .user(userToSave)
+                        .orgUser(userToSave)
                         .build())
                 .collect(Collectors.toList()));
         return create(userToSave);

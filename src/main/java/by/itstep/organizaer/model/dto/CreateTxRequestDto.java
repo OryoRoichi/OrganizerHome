@@ -12,11 +12,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateTxRequestDto {
 
-    Long friendId;
-
     Long sourceAccountId;
 
     Long targetAccountId;
 
     Float amount;
+
+    Boolean isAutoConverted = false;
 }

@@ -15,11 +15,12 @@ import by.itstep.organizaer.utils.SecurityUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Service
@@ -34,6 +35,8 @@ public class TransactionService {
     FriendRepository friendRepository;
 
     AccountRepository accountRepository;
+
+    CurrencyExchengeService exchengeService;
 
     public TxDto getTx(final Long id) {
         return repository.findById(id)
@@ -58,6 +61,15 @@ public class TransactionService {
         Account targetAccount = Optional.ofNullable(request.getTargetAccountId())
                 .flatMap(id -> accountRepository.findById(request.getTargetAccountId()))
                 .orElseThrow(() -> new AccountNotFoundException(request.getTargetAccountId()));
+        if (sourceAccount.getCurrency() == targetAccount.getCurrency()) {
+            return transactAndSave(sourceAccount, targetAccount, request);
+        } else if (request.getIsAutoConverted()) {
+            request.setAmount(exchengeService.exchange(request.getAmount(), sourceAccount.getCurrency(), targetAccount.getCurrency()));
+            return transactAndSave(sourceAccount, targetAccount, request);
+        } else throw new TransactionException("Валюты счетов не совпадают");
+    }
+
+    private TxDto transactAndSave(Account sourceAccount, Account targetAccount, CreateTxRequestDto request) {
         return Optional.of(sourceAccount)
                 .filter(account -> account.getAmmount() >= request.getAmount())
                 .map(account -> {
@@ -65,10 +77,8 @@ public class TransactionService {
                     targetAccount.setAmmount(targetAccount.getAmmount() + request.getAmount());
                     accountRepository.save(account);
                     accountRepository.save(targetAccount);
-                    return Optional.ofNullable(request.getFriendId())
-                            .flatMap(friendRepository::findById)
-                            .map(friend -> mapper.toDto(createTransaction(request, friend, account, targetAccount)))
-                            .orElseGet(() -> mapper.toDto(createTransaction(request, null, account, targetAccount)));
+
+                    return mapper.toDto(createTransaction(request, getFriend(targetAccount), account, targetAccount));
 
                 })
                 .orElseThrow(() -> new NotEnoughFoundsException(sourceAccount.getName()));
@@ -85,10 +95,26 @@ public class TransactionService {
                 .build());
     }
 
-    private Friend getFriend(Long id) {
-        return Optional.ofNullable(id)
-                .flatMap(friendRepository::findById)
-                .orElseThrow(() -> new FriendNotFoundException("Не верный идентификатор друга"));
+    private Friend getFriend(Account targetAccount) {
+        return Optional.ofNullable(targetAccount.getUser())
+                .flatMap(user -> {
+                    if (SecurityUtil.getCurrentUser()
+                            .map(User::getId)
+                            .stream()
+                            .anyMatch(id -> id.equals(user.getId()))) {
+                        User self = SecurityUtil.getCurrentUser().get();
+                        return Optional.of(friendRepository.findByUuidAndUser(user.getUuid(), self)
+                                .orElseGet(() -> friendRepository.save(Friend.builder()
+                                        .uuid(self.getUuid())
+                                        .birthday(LocalDateTime.of(self.getBirthDay(), LocalTime.MIDNIGHT))
+                                        .contacts(self.getContacts())
+                                        .user(self)
+                                        .build())));
+                    }
+                    return friendRepository.findByUuidAndUser(user.getUuid(), SecurityUtil.getCurrentUser().get());
+                })
+                .orElse(null);
+
     }
 
 }

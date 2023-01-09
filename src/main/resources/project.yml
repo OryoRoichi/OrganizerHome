@@ -4,3 +4,6 @@ project:
   security:
     secret-key: the_very_secret_that_nobody_can_guess
     token-lifetime-hours: 1
+
+  business:
+    archivation-period-days: 90
