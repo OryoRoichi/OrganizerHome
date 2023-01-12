@@ -25,7 +25,7 @@ public class Archive {
 
     Float spend;
 
-    LocalDate from;
+    LocalDate dateFrom;
 
     LocalDate til;
 }
