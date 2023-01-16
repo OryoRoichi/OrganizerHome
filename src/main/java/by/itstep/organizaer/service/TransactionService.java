@@ -17,12 +17,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 
+@Validated
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -45,7 +48,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public TxDto doTransact(CreateTxRequestDto request) {
+    public TxDto doTransact(@Valid CreateTxRequestDto request) {
         if (request.getAmount() == null) {
             throw new BadRequestException("Не указана сумма транзакции");
         }

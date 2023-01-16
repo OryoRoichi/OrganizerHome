@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,9 +18,16 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegistrationRequest {
 
+    @Size(min = 5, max = 12)
+    @NotBlank
     String login;
 
+    @Size(min = 8, max = 20)
+    @NotBlank
     String password;
+
+    @Pattern(regexp = "^\\w+@\\w+\\.\\w+$")
+    String email;
 
     String name;
 
