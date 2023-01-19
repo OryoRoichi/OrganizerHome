@@ -1,16 +1,16 @@
 package by.itstep.organizaer.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
+@EqualsAndHashCode
 public class Authority implements GrantedAuthority {
 
     @Id

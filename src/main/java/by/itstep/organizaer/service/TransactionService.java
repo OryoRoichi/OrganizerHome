@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -49,20 +48,15 @@ public class TransactionService {
 
     @Transactional
     public TxDto doTransact(@Valid CreateTxRequestDto request) {
-        if (request.getAmount() == null) {
-            throw new BadRequestException("Не указана сумма транзакции");
-        }
         return doTransferTx(request);
     }
 
     private TxDto doTransferTx(CreateTxRequestDto request) {
         User currentUser = SecurityUtil.getCurrentUser()
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        Account sourceAccount = Optional.ofNullable(request.getSourceAccountId())
-                .flatMap(id -> accountRepository.findByIdAndUser(request.getSourceAccountId(), currentUser))
+        Account sourceAccount = accountRepository.findByIdAndUser(request.getSourceAccountId(), currentUser)
                 .orElseThrow(() -> new AccountNotFoundException(request.getSourceAccountId()));
-        Account targetAccount = Optional.ofNullable(request.getTargetAccountId())
-                .flatMap(id -> accountRepository.findById(request.getTargetAccountId()))
+        Account targetAccount = accountRepository.findById(request.getTargetAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(request.getTargetAccountId()));
         if (sourceAccount.getCurrency() == targetAccount.getCurrency()) {
             return transactAndSave(sourceAccount, targetAccount, request);

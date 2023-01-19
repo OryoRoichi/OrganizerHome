@@ -10,10 +10,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ContactService {
 
-    UserRepository repository;
+    private final UserRepository repository;
 
     public Contacts createUserContact(Long userId, Contacts contacts) {
         return repository.findById(userId)

@@ -7,8 +7,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
@@ -20,11 +23,13 @@ public class TransactionController {
 
     TransactionService txService;
 
+    @PostAuthorize("hasAnyRole()")
     @GetMapping("/get")
     public ResponseEntity<TxDto> get(@RequestParam @Min(value = 1) Long id) {
         return ResponseEntity.ok(txService.getTx(id));
     }
 
+    @RolesAllowed("USER")
     @PostMapping("/create")
     public ResponseEntity<TxDto> create(@RequestBody @Valid CreateTxRequestDto request) {
         return ResponseEntity.ok(txService.doTransact(request));

@@ -1,5 +1,6 @@
 package by.itstep.organizaer.config;
 
+import by.itstep.organizaer.security.AccessDeniedAuthEntryPoint;
 import by.itstep.organizaer.security.AuthEntryPoint;
 import by.itstep.organizaer.security.AuthFilter;
 import by.itstep.organizaer.service.UserService;
@@ -31,6 +32,8 @@ public class SecurityConfig {
 
     AuthEntryPoint authEntryPoint;
 
+    AccessDeniedAuthEntryPoint accessDeniedAuthEntryPoint;
+
     AuthFilter filter;
 
     @Bean
@@ -42,6 +45,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
+                .accessDeniedHandler(accessDeniedAuthEntryPoint)
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
                 .authorizeHttpRequests()
