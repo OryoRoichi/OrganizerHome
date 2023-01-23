@@ -1,6 +1,7 @@
 package by.itstep.organizaer.web;
 
 import by.itstep.organizaer.model.dto.AccountDto;
+import by.itstep.organizaer.model.dto.BillDto;
 import by.itstep.organizaer.service.AccountService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/account")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -18,7 +21,6 @@ public class AccountController {
 
     AccountService accountService;
 
-    //@PreAuthorize(value = "hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(accountDto));
@@ -38,5 +40,10 @@ public class AccountController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@RequestParam Long id) {
         accountService.delete(id);
+    }
+
+    @PatchMapping("/fill")
+    public ResponseEntity<BillDto> fill(@RequestBody @Valid BillDto billDto){
+        return
     }
 }

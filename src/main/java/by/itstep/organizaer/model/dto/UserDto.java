@@ -20,8 +20,6 @@ public class UserDto {
 
     String login;
 
-    String password;
-
     String name;
 
     Contacts contacts;

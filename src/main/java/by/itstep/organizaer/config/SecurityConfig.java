@@ -7,8 +7,10 @@ import by.itstep.organizaer.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -57,15 +59,24 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http, @Qualifier("major") PasswordEncoder encoder) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(userService)
-                .passwordEncoder(passwordEncoder())
+                .passwordEncoder(encoder)
                 .and().build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    @Qualifier("major")
+    public PasswordEncoder majorPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    @Qualifier("alternate")
+    public PasswordEncoder alternativePasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
 }

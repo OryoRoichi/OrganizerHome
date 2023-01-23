@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,7 @@ public class ArchivationService {
                         .map(entry -> {
                             Float spendAmount = entry.getValue()
                                     .stream()
+                                    .filter(tx -> tx.getSourceAccount() != null)
                                     .filter(tx -> tx.getSourceAccount().getId().equals(entry.getKey().getId()))
                                     .map(Transaction::getAmount)
                                     .reduce(Float::sum)
@@ -69,6 +71,7 @@ public class ArchivationService {
                                     .account(entry.getKey())
                                     .spend(spendAmount)
                                     .income(incomeAmount)
+                                    .til(before.toLocalDate())
                                     .build());
                             return entry.getValue();
                         })

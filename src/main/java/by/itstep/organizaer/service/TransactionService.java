@@ -1,6 +1,7 @@
 package by.itstep.organizaer.service;
 
 import by.itstep.organizaer.exceptions.*;
+import by.itstep.organizaer.model.dto.BillDto;
 import by.itstep.organizaer.model.dto.CreateTxRequestDto;
 import by.itstep.organizaer.model.dto.TxDto;
 import by.itstep.organizaer.model.entity.Account;
@@ -112,6 +113,16 @@ public class TransactionService {
                 })
                 .orElse(null);
 
+    }
+
+    public BillDto fillAccount(BillDto billDto) {
+        return accountRepository.findById(billDto.getId()).map(account -> {
+            if (account.getCurrency() == billDto.getCurrency()) {
+                account.setAmmount(account.getAmmount() + billDto.getAmount());
+                accountRepository.save(account);
+                createTransaction( request, null, null,  account);
+            }
+        })
     }
 
 }
