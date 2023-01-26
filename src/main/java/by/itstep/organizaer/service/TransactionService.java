@@ -116,13 +116,22 @@ public class TransactionService {
     }
 
     public BillDto fillAccount(BillDto billDto) {
-        return accountRepository.findById(billDto.getId()).map(account -> {
-            if (account.getCurrency() == billDto.getCurrency()) {
-                account.setAmmount(account.getAmmount() + billDto.getAmount());
-                accountRepository.save(account);
-                createTransaction( request, null, null,  account);
-            }
-        })
+        return accountRepository.findById(billDto.getId())
+                .map(account -> {
+                    account.setAmmount(account.getAmmount() + exchengeService.exchange(billDto.getAmount(), billDto.getCurrency(), account.getCurrency()));
+                    accountRepository.save(account);
+                    Transaction tx = createTransaction(CreateTxRequestDto
+                            .builder()
+                            .amount(billDto.getAmount())
+                            .build(), null, null, account);
+                    return BillDto.builder()
+                            .accountName(account.getName())
+                            .currency(account.getCurrency())
+                            .transactionDate(tx.getDateTime())
+                            .id(tx.getId())
+                            .build();
+                })
+                .orElseThrow(() -> new AccountNotFoundException(billDto.getId()));
     }
 
 }

@@ -18,7 +18,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    @Column(unique = true)
+    @Column
     String name;
 
     Float ammount;

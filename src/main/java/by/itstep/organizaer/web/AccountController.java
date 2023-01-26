@@ -42,8 +42,8 @@ public class AccountController {
         accountService.delete(id);
     }
 
-    @PatchMapping("/fill")
+/*    @PatchMapping("/fill")
     public ResponseEntity<BillDto> fill(@RequestBody @Valid BillDto billDto){
         return
-    }
+    }*/
 }

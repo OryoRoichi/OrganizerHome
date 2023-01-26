@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
                 .authorizeHttpRequests()
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/auth/**", "/test/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
