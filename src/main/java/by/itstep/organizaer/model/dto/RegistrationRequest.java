@@ -31,6 +31,11 @@ public class RegistrationRequest {
 
     String name;
 
+    @NotBlank
+    @Pattern(regexp = "^(\\+)+\\d+$")
+    @Size(max = 16, min = 6)
+    String phone;
+
     LocalDate birthDay;
 
     @JsonIgnore

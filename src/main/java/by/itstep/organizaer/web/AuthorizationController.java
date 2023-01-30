@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -55,7 +56,7 @@ public class AuthorizationController {
 
     // http://localhost:8080/auth/register
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody RegistrationRequest request) {
+    public ResponseEntity<UserDto> register(@RequestBody @Valid RegistrationRequest request) {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         request.setRoles(List.of(Roles.ROLE_USER));
         return ResponseEntity

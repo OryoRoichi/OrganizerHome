@@ -1,0 +1,43 @@
+package by.itstep.organizaer.service;
+
+import by.itstep.organizaer.model.dto.FriendDto;
+import by.itstep.organizaer.model.entity.Friend;
+import by.itstep.organizaer.model.entity.User;
+import by.itstep.organizaer.model.mapping.FriendMapper;
+import by.itstep.organizaer.repository.FriendRepository;
+import by.itstep.organizaer.repository.UserRepository;
+import by.itstep.organizaer.utils.SecurityUtil;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+@Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
+public class FriendService {
+
+    FriendRepository friendRepository;
+
+    FriendMapper friendMapper;
+
+    UserRepository userRepository;
+
+    @Transactional
+    public FriendDto createFriend(FriendDto friendDto){
+        Friend friend = friendMapper.toEntity(friendDto);
+        Optional<User> userOptional = userRepository.findByPhone(friend.getContacts().getPhone());
+        if(userOptional.isPresent()){
+            friend.setUuid(userOptional.get().getUuid());
+        }
+        User currentUser = SecurityUtil.getCurrentUser().orElseThrow(() -> new AuthenticationServiceException("Ошибка авторизации"));
+        friend.setUser(currentUser);
+        friendRepository.save(friend);
+        return friendMapper.toDto(friend);
+    }
+
+}

@@ -1,8 +1,6 @@
 package by.itstep.organizaer.model.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
@@ -12,18 +10,23 @@ import java.util.UUID;
 @Data
 @Builder
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Friend {
 
+    private static final String SEQ_NAME = "friend_id_seq";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
+    @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME, allocationSize = 1)
     Long id;
 
     UUID uuid;
 
     String name;
 
-    @OneToOne
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     Contacts contacts;
 
     LocalDateTime birthday;

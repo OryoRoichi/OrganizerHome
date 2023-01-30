@@ -20,11 +20,15 @@ import java.util.UUID;
 @NoArgsConstructor
 public class User implements UserDetails {
 
+    private static final String SEQ_NAME = "org_user_id_seq";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
+    @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME, allocationSize = 1)
     Long id;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // Данная колонка имеет тип READ_ONLY потому что её значение генерируется базой данных
+    @Column(insertable = false, updatable = false)
     UUID uuid;
 
     @Column(unique = true)
@@ -34,7 +38,7 @@ public class User implements UserDetails {
 
     String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     Contacts contacts;
 
     LocalDate birthDay;
