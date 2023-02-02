@@ -1,7 +1,9 @@
 package by.itstep.organizaer.web;
 
+import by.itstep.organizaer.model.dto.AbstractArchiveStatsDto;
 import by.itstep.organizaer.model.dto.AccountDto;
 import by.itstep.organizaer.model.dto.BillDto;
+import by.itstep.organizaer.model.dto.enums.ArchiveStatsType;
 import by.itstep.organizaer.service.AccountService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -46,4 +48,9 @@ public class AccountController {
     public ResponseEntity<BillDto> fill(@RequestBody @Valid BillDto billDto){
         return
     }*/
+
+    @GetMapping("/get-archive-stats")
+    public ResponseEntity<? extends AbstractArchiveStatsDto> getArchiveStats(@RequestParam Long id, @RequestParam ArchiveStatsType type) {
+
+    }
 }

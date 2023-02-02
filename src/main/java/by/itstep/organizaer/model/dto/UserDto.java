@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -23,6 +24,8 @@ public class UserDto {
     String name;
 
     Contacts contacts;
+
+    UUID uuid;
 
     LocalDate birthDay;
 
