@@ -99,17 +99,17 @@ public class TransactionService {
                     if (SecurityUtil.getCurrentUser()
                             .map(User::getId)
                             .stream()
-                            .anyMatch(id -> id.equals(user.getId()))) {
-                        User self = SecurityUtil.getCurrentUser().get();
-                        return Optional.of(friendRepository.findByUuidAndUser(user.getUuid(), self)
-                                .orElseGet(() -> friendRepository.save(Friend.builder()
-                                        .uuid(self.getUuid())
-                                        .birthday(LocalDateTime.of(self.getBirthDay(), LocalTime.MIDNIGHT))
-                                        .contacts(self.getContacts())
-                                        .user(self)
-                                        .build())));
+                            .anyMatch(id -> !id.equals(user.getId()))) {
+                        return friendRepository.findByUuidAndUser(user.getUuid(), SecurityUtil.getCurrentUser().get());
                     }
-                    return friendRepository.findByUuidAndUser(user.getUuid(), SecurityUtil.getCurrentUser().get());
+                    return SecurityUtil.getCurrentUser()
+                            .map(self -> friendRepository.save(Friend.builder()
+                                            .user(self)
+                                            .contacts(user.getContacts())
+                                            .birthday(user.getBirthDay())
+                                            .uuid(user.getUuid())
+                                            .name(user.getName())
+                                    .build()));
                 })
                 .orElse(null);
 

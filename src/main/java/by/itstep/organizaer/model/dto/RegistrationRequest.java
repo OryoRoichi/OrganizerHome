@@ -18,7 +18,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegistrationRequest {
 
-    @Size(min = 5, max = 12)
+    @Size(min = 5, max = 20)
     @NotBlank
     String login;
 

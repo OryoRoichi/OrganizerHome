@@ -1,19 +1,17 @@
 package by.itstep.organizaer.web;
 
-import by.itstep.organizaer.model.dto.AbstractArchiveStatsDto;
+
 import by.itstep.organizaer.model.dto.AccountDto;
-import by.itstep.organizaer.model.dto.BillDto;
+import by.itstep.organizaer.model.dto.ArchiveStatsDto;
 import by.itstep.organizaer.model.dto.enums.ArchiveStatsType;
 import by.itstep.organizaer.service.AccountService;
+import by.itstep.organizaer.service.ArchivationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/account")
@@ -22,6 +20,7 @@ import javax.validation.Valid;
 public class AccountController {
 
     AccountService accountService;
+    ArchivationService archivationService;
 
     @PostMapping("/create")
     public ResponseEntity<AccountDto> createAccount(@RequestBody AccountDto accountDto) {
@@ -50,7 +49,8 @@ public class AccountController {
     }*/
 
     @GetMapping("/get-archive-stats")
-    public ResponseEntity<? extends AbstractArchiveStatsDto> getArchiveStats(@RequestParam Long id, @RequestParam ArchiveStatsType type) {
+    public ResponseEntity<? extends ArchiveStatsDto> getArchiveStats(@RequestParam Long id, @RequestParam ArchiveStatsType type) {
+        return ResponseEntity.ok(archivationService.getStats(id, type));
 
     }
 }

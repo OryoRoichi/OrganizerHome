@@ -2,7 +2,10 @@ package by.itstep.organizaer.service;
 
 import by.itstep.organizaer.config.ProjectConfiguration;
 import by.itstep.organizaer.exceptions.AccountNotFoundException;
-import by.itstep.organizaer.model.dto.AbstractArchiveStatsDto;
+import by.itstep.organizaer.exceptions.BadRequestException;
+import by.itstep.organizaer.model.dto.AllArchiveStatsDto;
+import by.itstep.organizaer.model.dto.ArchiveStatsDto;
+import by.itstep.organizaer.model.dto.SingleArchiveStatsDto;
 import by.itstep.organizaer.model.dto.enums.ArchiveStatsType;
 import by.itstep.organizaer.model.entity.Account;
 import by.itstep.organizaer.model.entity.Archive;
@@ -17,12 +20,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,6 @@ public class ArchivationService {
     ProjectConfiguration projectConfiguration;
 
 
-
     @Async
     @Transactional
     @Scheduled(cron = "${project.business.sheduling.evening-cron}")
@@ -53,7 +53,12 @@ public class ArchivationService {
     @Scheduled(cron = "${project.business.sheduling.morning-cron}")
     public void archivate() {
         System.out.println("" + LocalTime.now() + " ПРОЦЕДУРА АРХИВИРОВАНИЯ ЗАПУЩЕНА");
-        LocalDateTime before = LocalDateTime.now().minusDays(projectConfiguration.getBusiness().getArchivationPeriodDays());
+        LocalDate before = LocalDate.now().minusDays(projectConfiguration.getBusiness().getArchivationPeriodDays());
+        LocalDate dateFrom = archiveRepository
+                .findLast()
+                .map(Archive::getTil)
+                .orElse(null);
+        archiveRepository.deleteAll();
         transactionRepository.deleteAll(
                 accountRepository.findAll()
                         .stream()
@@ -78,19 +83,47 @@ public class ArchivationService {
                                     .account(entry.getKey())
                                     .spend(spendAmount)
                                     .income(incomeAmount)
-                                    .til(before.toLocalDate())
+                                    .til(before)
+                                    .dateFrom(dateFrom)
                                     .build());
                             return entry.getValue();
                         })
-                        .flatMap(list -> list.stream())
+                        .flatMap(Collection::stream)
                         .collect(Collectors.toList()));
         System.out.println("" + LocalTime.now() + " ПРОЦЕДУРА АРХИВИРОВАНИЯ ЗАВЕРШЕНА");
     }
 
-    public AbstractArchiveStatsDto getStats(Long id, ArchiveStatsType type) {
+    public ArchiveStatsDto getStats(Long id, ArchiveStatsType type) {
         Account account = accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id));
-        archiveRepository.findByAccount(account).map(archive -> {
-            if()
-        })
+        return archiveRepository.findByAccount(account).map(archive -> {
+            switch (type) {
+                case ALL:
+                    return AllArchiveStatsDto.builder()
+                            .income(archive.getIncome())
+                            .spend(archive.getSpend())
+                            .dateTo(archive.getTil())
+                            .dateFrom(archive.getDateFrom())
+                            .accountName(account.getName())
+                            .build();
+                case INCOME:
+                    return SingleArchiveStatsDto.builder()
+                            .ammount(archive.getIncome())
+                            .dateTo(archive.getTil())
+                            .dateFrom(archive.getDateFrom())
+                            .accountName(account.getName())
+                            .build();
+                case SPEND:
+                    return SingleArchiveStatsDto.builder()
+                            .ammount(archive.getSpend())
+                            .dateTo(archive.getTil())
+                            .dateFrom(archive.getDateFrom())
+                            .accountName(account.getName())
+                            .build();
+                default:
+                    throw new BadRequestException("Ошибка сериализации");
+            }
+        }).orElseGet(() -> ArchiveStatsDto.builder()
+                .accountName(account.getName())
+                .build());
     }
 }

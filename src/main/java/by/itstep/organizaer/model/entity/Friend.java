@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public class Friend {
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     Contacts contacts;
 
-    LocalDateTime birthday;
+    LocalDate birthday;
 
     @ManyToOne
     User user;
