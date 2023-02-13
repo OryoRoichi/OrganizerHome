@@ -17,4 +17,5 @@ public abstract class AbstractAnalyticsResponseDto {
     LocalDateTime dateFrom;
 
     LocalDateTime dateTo;
+    FriendShortInfoDto friend;
 }

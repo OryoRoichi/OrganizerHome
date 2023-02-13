@@ -1,4 +1,4 @@
-package by.itstep.organizaer.service;
+package by.itstep.organizaer.service.analitycs;
 
 import by.itstep.organizaer.config.ProjectConfiguration;
 import by.itstep.organizaer.exceptions.AccountNotFoundException;

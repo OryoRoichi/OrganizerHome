@@ -7,8 +7,8 @@ import by.itstep.organizaer.model.dto.analytics.AbstractAnalyticsResponseDto;
 import by.itstep.organizaer.model.dto.analytics.AnalyticsTxRequestDto;
 import by.itstep.organizaer.model.dto.enums.ArchiveStatsType;
 import by.itstep.organizaer.service.AccountService;
-import by.itstep.organizaer.service.AnalyticsService;
-import by.itstep.organizaer.service.ArchivationService;
+import by.itstep.organizaer.service.analitycs.AnalyticsService;
+import by.itstep.organizaer.service.analitycs.ArchivationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,7 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/account")
@@ -60,20 +62,8 @@ public class AccountController {
         return ResponseEntity.ok(archivationService.getStats(id, type));
     }
 
-    @GetMapping("/get-analitycs")
-    public ResponseEntity<? extends AbstractAnalyticsResponseDto> getAnalitycs(@RequestParam Long accountId,
-                                                                               @RequestParam ArchiveStatsType type,
-                                                                               @RequestParam(required = false) LocalDateTime dateFrom,
-                                                                               @RequestParam(required = false) LocalDateTime dateTo,
-                                                                               @RequestParam(required = false) Float gtThan,
-                                                                               @RequestParam(required = false) Float lsThan) {
-        return ResponseEntity.ok(analyticsService.getTxAnalytics(AnalyticsTxRequestDto.builder()
-                .type(type)
-                .accountId(accountId)
-                .dateFrom(dateFrom)
-                .dateTo(dateTo)
-                .greaterThan(gtThan)
-                .lessThan(lsThan)
-                .build()));
+    @PostMapping("/get-analitycs")
+    public ResponseEntity<List<? extends AbstractAnalyticsResponseDto>> getAnalitycs(@RequestBody AnalyticsTxRequestDto requestBody) throws AuthenticationException {
+        return ResponseEntity.ok(analyticsService.getTxAnalytics(requestBody));
     }
 }
